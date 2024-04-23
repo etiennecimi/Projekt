@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalorientracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h2>Kalorientracker</h2>
+    </header>
+    <main>
+        <section>
+            <h2>Mahlzeit hinzufügen</h2>
+            <form>
+                <label for="meal">Gericht:</label>
+                <input type="text" id="meal" name="meal" required>
+                <label for="calories">Kalorien:</label>
+                <input type="number" id="calories" name="calories" required>
+                <button type="submit">Hinzufügen</button>
+            </form>
+        </section>
+        <section>
+            <h2>Tageszusammenfassung</h2>
+            <p>Gesamtkalorien heute: <span id="total-calories">0</span></p>
+            <p>Verbleibende Kalorien: <span id="remaining-calories">2000</span></p>
+        </section>
+    </main>
+    <footer>
+
+    </footer>
+</body>
+</html>
