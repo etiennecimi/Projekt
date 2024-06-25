@@ -1,0 +1,19 @@
+{
+  "name": "projekt",
+  "version": "1.0.0",
+  "description": "Idee für GIS \r Kalorientracker mit dem man die Kalorien von Gerichten tracken kann und das Programm die Kalorien pro tag zusammen zählt. Alte Mahlzeiten werden gespeichert und Benutzer können individuelle Kalorienziele festlegen. Abschliessend noch ein Wassertracker der trackt ob man genug Wasser trinkt (3-4L am Tag, individuell einstellbar)",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.3"
+  }
+}

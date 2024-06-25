@@ -6,11 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMeals();
 });
 
+// header
 function createHeader() {
     const header = document.getElementById('header');
     header.innerHTML = `<h1>Kalorientracker</h1>`;
 }
 
+// hauptinhalt der seite
 function createMainContent() {
     const mainContent = document.getElementById('main-content');
 
@@ -35,16 +37,17 @@ function createMainContent() {
     `;
     mainContent.appendChild(summarySection);
 
-  
+    // Event Listener für das Hinzufügen von Mahlzeiten
     document.getElementById('meal-form').addEventListener('submit', addMeal);
 }
 
+// footerbereich
 function createFooter() {
     const footer = document.getElementById('footer');
     footer.innerHTML = `<p>&copy; 2024 Kalorientracker</p>`;
 }
 
-
+//gericht hinzufügen
 function addMeal(event) {
     event.preventDefault();
     const mealInput = document.getElementById('meal');
@@ -66,11 +69,13 @@ function addMeal(event) {
     }
 }
 
+// lädt die mahlzeiten
 function loadMeals() {
     updateMealList();
     updateTotalCalories();
 }
 
+// updated die Gerichte
 function updateMealList() {
     const mealList = document.getElementById('meal-list');
     mealList.innerHTML = '';
@@ -87,6 +92,7 @@ function updateMealList() {
     });
 }
 
+// updaten der gesamtkalorien
 function updateTotalCalories() {
     const totalCalories = document.getElementById('total-calories');
     const meals = getMealsFromStorage();
@@ -94,6 +100,7 @@ function updateTotalCalories() {
     totalCalories.textContent = total;
 }
 
+// gericht löschen
 function deleteMeal(index) {
     const meals = getMealsFromStorage();
     meals.splice(index, 1);
@@ -103,7 +110,9 @@ function deleteMeal(index) {
     updateTotalCalories();
 }
 
+// gespeicherte mahlzeiten aus lokalem storage  	
 function getMealsFromStorage() {
     const meals = localStorage.getItem('meals');
     return meals ? JSON.parse(meals) : [];
 }
+
