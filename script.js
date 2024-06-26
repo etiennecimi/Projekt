@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     createHeader();
     createMainContent();
@@ -6,13 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMeals();
 });
 
-// header
 function createHeader() {
     const header = document.getElementById('header');
     header.innerHTML = `<h1>Kalorientracker</h1>`;
 }
 
-// hauptinhalt der seite
 function createMainContent() {
     const mainContent = document.getElementById('main-content');
 
@@ -37,18 +34,15 @@ function createMainContent() {
     `;
     mainContent.appendChild(summarySection);
 
-    // Event Listener für das Hinzufügen von Mahlzeiten
     document.getElementById('meal-form').addEventListener('submit', addMeal);
 }
 
-// footerbereich
 function createFooter() {
     const footer = document.getElementById('footer');
     footer.innerHTML = `<p>&copy; 2024 Kalorientracker</p>`;
 }
 
-//gericht hinzufügen
-function addMeal(event) {
+async function addMeal(event) {
     event.preventDefault();
     const mealInput = document.getElementById('meal');
     const caloriesInput = document.getElementById('calories');
@@ -57,62 +51,64 @@ function addMeal(event) {
     const calories = parseInt(caloriesInput.value);
 
     if (meal && calories) {
-        const meals = getMealsFromStorage();
-        meals.push({ meal, calories });
-        localStorage.setItem('meals', JSON.stringify(meals));
+        const response = await fetch('http://localhost:3000/meals', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ meal, calories })
+        });
 
-        mealInput.value = '';
-        caloriesInput.value = '';
-
-        updateMealList();
-        updateTotalCalories();
+        if (response.ok) {
+            mealInput.value = '';
+            caloriesInput.value = '';
+            loadMeals(); // Lade die Mahlzeiten erneut nach dem Hinzufügen einer neuen Mahlzeit
+        } else {
+            console.error('Fehler beim Hinzufügen der Mahlzeit');
+        }
     }
 }
 
-// lädt die mahlzeiten
-function loadMeals() {
-    updateMealList();
-    updateTotalCalories();
+async function loadMeals() {
+    const response = await fetch('http://localhost:3000/meals');
+    if (response.ok) {
+        const meals = await response.json();
+        updateMealList(meals);
+        updateTotalCalories(meals);
+    } else {
+        console.error('Fehler beim Laden der Mahlzeiten');
+    }
 }
 
-// updated die Gerichte
-function updateMealList() {
+function updateMealList(meals) {
     const mealList = document.getElementById('meal-list');
     mealList.innerHTML = '';
 
-    const meals = getMealsFromStorage();
-    meals.forEach((item, index) => {
+    meals.forEach((item) => {
         const li = document.createElement('li');
         li.textContent = `${item.meal} - ${item.calories} kcal`;
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Löschen';
-        deleteButton.addEventListener('click', () => deleteMeal(index));
+        deleteButton.addEventListener('click', () => deleteMeal(item._id));
         li.appendChild(deleteButton);
         mealList.appendChild(li);
     });
 }
 
-// updaten der gesamtkalorien
-function updateTotalCalories() {
+function updateTotalCalories(meals) {
     const totalCalories = document.getElementById('total-calories');
-    const meals = getMealsFromStorage();
     const total = meals.reduce((sum, item) => sum + item.calories, 0);
     totalCalories.textContent = total;
 }
 
-// gericht löschen
-function deleteMeal(index) {
-    const meals = getMealsFromStorage();
-    meals.splice(index, 1);
-    localStorage.setItem('meals', JSON.stringify(meals));
+async function deleteMeal(id) {
+    const response = await fetch(`http://localhost:3000/meals/${id}`, {
+        method: 'DELETE'
+    });
 
-    updateMealList();
-    updateTotalCalories();
+    if (response.ok) {
+        loadMeals();
+    } else {
+        console.error('Fehler beim Löschen der Mahlzeit');
+    }
 }
-
-// gespeicherte mahlzeiten aus lokalem storage  	
-function getMealsFromStorage() {
-    const meals = localStorage.getItem('meals');
-    return meals ? JSON.parse(meals) : [];
-}
-

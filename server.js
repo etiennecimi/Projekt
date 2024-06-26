@@ -3,14 +3,15 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-// express app
+// Express app
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static('public')); // Dient statische Dateien aus dem "public"-Ordner aus
 
-// connenction zu Mongodb
+// Verbindung zu MongoDB
 mongoose.connect('mongodb://localhost:27017/kalorientracker', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -22,7 +23,7 @@ db.once('open', () => {
   console.log('Verbunden mit MongoDB');
 });
 
-// schema und modell erstellen 
+// Schema und Modell erstellen
 const mealSchema = new mongoose.Schema({
   meal: String,
   calories: Number,
@@ -30,12 +31,12 @@ const mealSchema = new mongoose.Schema({
 
 const Meal = mongoose.model('Meal', mealSchema);
 
-// nachfragen bei Praktikum 
+// API-Routen
 app.get('/', (req, res) => {
   res.send('Kalorientracker API');
 });
 
-// alle gerichte abfragen 
+// Alle Gerichte abfragen
 app.get('/meals', async (req, res) => {
   try {
     const meals = await Meal.find();
@@ -45,7 +46,7 @@ app.get('/meals', async (req, res) => {
   }
 });
 
-// gericht hinzufügen
+// Gericht hinzufügen
 app.post('/meals', async (req, res) => {
   const meal = new Meal(req.body);
   try {
@@ -56,7 +57,7 @@ app.post('/meals', async (req, res) => {
   }
 });
 
-// gericht löschen
+// Gericht löschen
 app.delete('/meals/:id', async (req, res) => {
   try {
     const deletedMeal = await Meal.findByIdAndRemove(req.params.id);
@@ -69,7 +70,7 @@ app.delete('/meals/:id', async (req, res) => {
   }
 });
 
-// server starten
+// Server starten
 app.listen(port, () => {
   console.log(`Server läuft auf http://localhost:${port}`);
 });
