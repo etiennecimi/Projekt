@@ -60,13 +60,14 @@ app.post('/meals', async (req, res) => {
 // gericht löschen mit DELETE
 app.delete('/meals/:id', async (req, res) => {
   try {
-    await Meal.findByIdAndDelete(req.params.id);
-    const meals = await Meal.find(); // Die aktualisierte Liste der verbleibenden Gerichte abrufen
-    res.json(meals); // Die Liste zurückgeben
+      await Meal.findByIdAndDelete(req.params.id);
+      const meals = await Meal.find(); // Die aktualisierte Liste der verbleibenden Gerichte abrufen
+      res.json(meals); // Die Liste zurückgeben
   } catch (err) {
-    res.status(500).send(err);
+      res.status(500).send(err);
   }
 });
+
 // server starten mit console nachricht
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

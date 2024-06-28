@@ -104,19 +104,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // löscht ein gericht und aktualisiert die kalorien und gerichtliste
   async function deleteMeal(id) {
-    // löscht gericht von server
+    // Versuch, die Mahlzeit vom Server zu löschen
     const response = await fetch(`http://localhost:3000/meals/${id}`, {
-      method: 'DELETE'
+        method: 'DELETE'
     });
-  
+
     if (response.ok) {
-      const meals = await response.json(); // Die aktualisierte Liste der Mahlzeiten vom Server erhalten
-      updateMealList(meals); // liste der mahlzeiten im frontend aktualisieren
-      updateTotalCalories(meals); // Die Gesamtkalorienzahl im Frontend aktualisieren
+        // Aktualisierte Liste der Mahlzeiten vom Server erhalten
+        const meals = await response.json();
+        // Liste der Mahlzeiten im Frontend aktualisieren
+        updateMealList(meals);
+        // Gesamtkalorien im Frontend aktualisieren
+        updateTotalCalories(meals);
     } else {
-      console.error('Fehler beim Löschen der Mahlzeit');
-      // wenn fehlschlägt werden meals neu geladen
-      loadMeals();
+        console.error('Fehler beim Löschen der Mahlzeit');
+        // Wenn das Löschen fehlschlägt, lade die Mahlzeiten neu, um die Konsistenz der UI zu gewährleisten
+        loadMeals();
     }
-  }
+}
+
   
