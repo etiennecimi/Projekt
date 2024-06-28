@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public')); // Dient statische Dateien aus dem "public"-Ordner aus
 
-// Verbindung zu MongoDB
+// verbindet die anwendung mit datenbank namens kalorientracker auf localhost27017
 mongoose.connect('mongodb://localhost:27017/kalorientracker', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -23,7 +23,7 @@ db.once('open', () => {
   console.log('Verbunden mit MongoDB');
 });
 
-// Schema und Modell erstellen
+// definiert ein gericht mit meal und calories
 const mealSchema = new mongoose.Schema({
   meal: String,
   calories: Number,
@@ -31,12 +31,12 @@ const mealSchema = new mongoose.Schema({
 
 const Meal = mongoose.model('Meal', mealSchema);
 
-// API-Routen
+// einfache route die begrüßungsnachricht zurüchgibt
 app.get('/', (req, res) => {
   res.send('Kalorientracker API');
 });
 
-// Alle Gerichte abfragen
+// alle gerichte abfragen
 app.get('/meals', async (req, res) => {
   try {
     const meals = await Meal.find();
@@ -46,7 +46,7 @@ app.get('/meals', async (req, res) => {
   }
 });
 
-// Gericht hinzufügen
+// gericht adden miut POST
 app.post('/meals', async (req, res) => {
   const meal = new Meal(req.body);
   try {
@@ -57,20 +57,17 @@ app.post('/meals', async (req, res) => {
   }
 });
 
-// Gericht löschen
+// gericht löschen mit DELETE
 app.delete('/meals/:id', async (req, res) => {
   try {
-    const deletedMeal = await Meal.findByIdAndRemove(req.params.id);
-    if (!deletedMeal) {
-      return res.status(404).send('Meal not found');
-    }
-    res.json(deletedMeal);
+    await Meal.findByIdAndDelete(req.params.id);
+    const meals = await Meal.find(); // Die aktualisierte Liste der verbleibenden Gerichte abrufen
+    res.json(meals); // Die Liste zurückgeben
   } catch (err) {
     res.status(500).send(err);
   }
 });
-
-// Server starten
+// server starten mit console nachricht
 app.listen(port, () => {
-  console.log(`Server läuft auf http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });

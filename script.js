@@ -1,18 +1,19 @@
+// header footer main erstellen und alle meals loaden
 document.addEventListener('DOMContentLoaded', () => {
     createHeader();
     createMainContent();
     createFooter();
     loadMeals();
-});
-
-function createHeader() {
+  });
+  // überschrift
+  function createHeader() {
     const header = document.getElementById('header');
     header.innerHTML = `<h1>Kalorientracker</h1>`;
-}
-
-function createMainContent() {
+  }
+  // main -> erstellt eingabe feld, button, etc
+  function createMainContent() {
     const mainContent = document.getElementById('main-content');
-
+  
     const mealSection = document.createElement('section');
     mealSection.innerHTML = `
         <h2>Mahlzeit hinzufügen</h2>
@@ -25,7 +26,7 @@ function createMainContent() {
         </form>
     `;
     mainContent.appendChild(mealSection);
-
+  
     const summarySection = document.createElement('section');
     summarySection.innerHTML = `
         <h2>Tageszusammenfassung</h2>
@@ -33,23 +34,23 @@ function createMainContent() {
         <ul id="meal-list"></ul>
     `;
     mainContent.appendChild(summarySection);
-
+  
     document.getElementById('meal-form').addEventListener('submit', addMeal);
-}
-
-function createFooter() {
+  }
+  // footer mit copyright zeichen
+  function createFooter() {
     const footer = document.getElementById('footer');
     footer.innerHTML = `<p>&copy; 2024 Kalorientracker</p>`;
-}
-
-async function addMeal(event) {
+  }
+  // sammelt eingegegene Daten von gericht  und kalorien schhickt an server und lädt dann neu
+  async function addMeal(event) {
     event.preventDefault();
     const mealInput = document.getElementById('meal');
     const caloriesInput = document.getElementById('calories');
-
+  
     const meal = mealInput.value;
     const calories = parseInt(caloriesInput.value);
-
+  
     if (meal && calories) {
         const response = await fetch('http://localhost:3000/meals', {
             method: 'POST',
@@ -58,7 +59,7 @@ async function addMeal(event) {
             },
             body: JSON.stringify({ meal, calories })
         });
-
+  
         if (response.ok) {
             mealInput.value = '';
             caloriesInput.value = '';
@@ -67,9 +68,9 @@ async function addMeal(event) {
             console.error('Fehler beim Hinzufügen der Mahlzeit');
         }
     }
-}
-
-async function loadMeals() {
+  }
+  // ruft alle gespeicherten gerichte vom server ab und lädt sie
+  async function loadMeals() {
     const response = await fetch('http://localhost:3000/meals');
     if (response.ok) {
         const meals = await response.json();
@@ -78,37 +79,44 @@ async function loadMeals() {
     } else {
         console.error('Fehler beim Laden der Mahlzeiten');
     }
-}
-
-function updateMealList(meals) {
+  }
+  // aktualisiert liste im frontend
+  function updateMealList(meals) {
     const mealList = document.getElementById('meal-list');
     mealList.innerHTML = '';
-
+  
     meals.forEach((item) => {
-        const li = document.createElement('li');
-        li.textContent = `${item.meal} - ${item.calories} kcal`;
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Löschen';
-        deleteButton.addEventListener('click', () => deleteMeal(item._id));
-        li.appendChild(deleteButton);
-        mealList.appendChild(li);
+      const li = document.createElement('li');
+      li.setAttribute('data-id', item._id); // Add this line
+      li.textContent = `${item.meal} - ${item.calories} kcal`;
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Löschen';
+      deleteButton.addEventListener('click', () => deleteMeal(item._id));
+      li.appendChild(deleteButton);
+      mealList.appendChild(li);
     });
-}
-
-function updateTotalCalories(meals) {
+  }
+  // kalorienrechner
+  function updateTotalCalories(meals) {
     const totalCalories = document.getElementById('total-calories');
     const total = meals.reduce((sum, item) => sum + item.calories, 0);
     totalCalories.textContent = total;
-}
-
-async function deleteMeal(id) {
+  }
+  // löscht ein gericht und aktualisiert die kalorien und gerichtliste
+  async function deleteMeal(id) {
+    // löscht gericht von server
     const response = await fetch(`http://localhost:3000/meals/${id}`, {
-        method: 'DELETE'
+      method: 'DELETE'
     });
-
+  
     if (response.ok) {
-        loadMeals();
+      const meals = await response.json(); // Die aktualisierte Liste der Mahlzeiten vom Server erhalten
+      updateMealList(meals); // liste der mahlzeiten im frontend aktualisieren
+      updateTotalCalories(meals); // Die Gesamtkalorienzahl im Frontend aktualisieren
     } else {
-        console.error('Fehler beim Löschen der Mahlzeit');
+      console.error('Fehler beim Löschen der Mahlzeit');
+      // wenn fehlschlägt werden meals neu geladen
+      loadMeals();
     }
-}
+  }
+  
