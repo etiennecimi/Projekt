@@ -110,15 +110,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (response.ok) {
-        // Aktualisierte Liste der Mahlzeiten vom Server erhalten
+        // aktualisierte liste von mahlzeiten vom server erhalten
         const meals = await response.json();
-        // Liste der Mahlzeiten im Frontend aktualisieren
+        // liste der mahlzeiten im frontend aktualisieren
         updateMealList(meals);
-        // Gesamtkalorien im Frontend aktualisieren
+        // gesamtkalorien im frontend aktualisieren
         updateTotalCalories(meals);
     } else {
         console.error('Fehler beim Löschen der Mahlzeit');
-        // Wenn das Löschen fehlschlägt, lade die Mahlzeiten neu, um die Konsistenz der UI zu gewährleisten
+        // wenn löschen vom gericht fehlschlägt, liste
         loadMeals();
     }
 }

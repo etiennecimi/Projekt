@@ -61,8 +61,8 @@ app.post('/meals', async (req, res) => {
 app.delete('/meals/:id', async (req, res) => {
   try {
       await Meal.findByIdAndDelete(req.params.id);
-      const meals = await Meal.find(); // Die aktualisierte Liste der verbleibenden Gerichte abrufen
-      res.json(meals); // Die Liste zurückgeben
+      const meals = await Meal.find(); // die aktualisierte liste der verbleibenden erichte abrufen
+      res.json(meals); // die liste zurückgeben
   } catch (err) {
       res.status(500).send(err);
   }
